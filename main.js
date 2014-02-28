@@ -8,8 +8,8 @@ game_state.main.prototype = {
 
     // Function called first to load all the assets
     preload: function() {
-        // Change the background color of the game
-        this.game.stage.backgroundColor = '#71c5cf';
+        // Load the background spirte
+        this.game.load.image('background', 'assets/background.png');
 
         // Load the bird spirte
         this.game.load.image('bird', 'assets/bird.png');
@@ -20,6 +20,9 @@ game_state.main.prototype = {
 
     // Fuction called after 'preload' to setup the game
     create: function() {
+        // Display the background on the screen
+        this.bird = this.game.add.sprite(0, 0, 'background');
+
         // Display the bird on the screen
         this.bird = this.game.add.sprite(100, 245, 'bird');
 
@@ -34,8 +37,8 @@ game_state.main.prototype = {
         this.pipes = game.add.group();
         this.pipes.createMultiple(20, 'pipe');
 
-        // Timer that calls 'add_row_of_pipes' ever 1.5 seconds
-        this.timer = this.game.time.events.loop(1500, this.add_row_of_pipes, this);
+        // Timer that calls 'add_row_of_pipes' ever 1.6 seconds
+        this.timer = this.game.time.events.loop(1600, this.add_row_of_pipes, this);
 
         // Add a score label on the top left of the screen
         this.score = 0;
@@ -83,13 +86,13 @@ game_state.main.prototype = {
         pipe.outOfBoundsKill = true;
     },
 
-    // Add a row of 6 pipes with a hole somewhere in the middle
+    // Add a row of 8 pipes with a hole somewhere in the middle
     add_row_of_pipes: function() {
-        var hole = Math.floor(Math.random()*5)+1;
+        var hole = Math.floor(Math.random()*7)+1;
 
-        for (var i = 0; i < 8; i++)
-            if (i != hole && i != hole +1)
-                this.add_one_pipe(400, i*60+10);
+        for (var i = 0; i < 10; i++)
+            if (i != hole && i != hole +1 && i != hole -1)
+                this.add_one_pipe(400, i*50);
 
         this.score += 1;
         this.label_score.content = this.score;
