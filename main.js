@@ -11,8 +11,8 @@ game_state.main.prototype = {
         // Load the background spirte
         this.game.load.image('background', 'assets/background.png');
 
-        // Load the bird spirte
-        this.game.load.image('bird', 'assets/bird.png');
+        // Load the bird sprtesheet, 60x42 is the size of each frame, and 3 is the total number of frames
+        this.game.load.spritesheet('bird', 'assets/bird.png', 60, 42, 3);
 
         // Load the pipe sprite
         this.game.load.image('pipe', 'assets/pipe.png');
@@ -25,6 +25,12 @@ game_state.main.prototype = {
 
         // Display the bird on the screen
         this.bird = this.game.add.sprite(100, 245, 'bird');
+
+        //  Here we add a new animation called 'fly'
+        this.bird.animations.add('fly');
+
+        //  And this starts the animation playing by using its key ('fly'), true means it will loop when it finishes
+        this.bird.animations.play('fly', 7, true);
 
         // Add gravity to the bird to make it fall
         this.bird.body.gravity.y = 1000;
