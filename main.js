@@ -30,7 +30,10 @@ game_state.main.prototype = {
         this.bird.animations.add('fly');
 
         //  And this starts the animation playing by using its key ('fly'), true means it will loop when it finishes
-        this.bird.animations.play('fly', 7, true);
+        this.bird.animations.play('fly', 6, true);
+
+        // Bird up and down with a tween
+        // this.game.add.tween(this.bird).to({ y: 260 }, 380, Phaser.Easing.Quadratic.InOut, true, 0, 1000, true);
 
         // Add gravity to the bird to make it fall
         this.bird.body.gravity.y = 1000;
@@ -43,8 +46,8 @@ game_state.main.prototype = {
         this.pipes = game.add.group();
         this.pipes.createMultiple(20, 'pipe');
 
-        // Timer that calls 'add_row_of_pipes' ever 1.6 seconds
-        this.timer = this.game.time.events.loop(1600, this.add_row_of_pipes, this);
+        // Timer that calls 'add_row_of_pipes' ever 1.8 seconds
+        this.timer = this.game.time.events.loop(1800, this.add_row_of_pipes, this);
 
         // Add a score label on the top left of the screen
         this.score = 0;
@@ -55,9 +58,18 @@ game_state.main.prototype = {
     // This function is called 60 times per second
     update: function() {
         // If the bird is out of the world (too high or too low), call the 'restart_game' function
-        if (this.bird.inWorld == false)
+        if (this.bird.inWorld == false) {
             this.restart_game();
+        }
 
+        if(this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+            this.bird.angle = -15;
+        } else {
+          var _this = this;
+           setTimeout(function() {
+             _this.bird.angle = 15;
+           }, 800);
+        }
         // If the bird overlap any pipes, call 'restart_game'
         this.game.physics.overlap(this.bird, this.pipes, this.restart_game, null, this);
     },
