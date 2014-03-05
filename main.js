@@ -1,6 +1,7 @@
 // Initialize Phaser, and creates a 400x490px game
 var game = new Phaser.Game(400, 490, Phaser.AUTO, 'game_div');
 var game_state = {};
+var initialTween;
 
 // Creates a new 'main' state that wil contain the game
 game_state.main = function() { };
@@ -30,13 +31,10 @@ game_state.main.prototype = {
         this.bird.animations.add('fly');
 
         //  And this starts the animation playing by using its key ('fly'), true means it will loop when it finishes
-        this.bird.animations.play('fly', 6, true);
+        this.bird.animations.play('fly', 7, true);
 
         // Bird up and down with a tween
-        // this.game.add.tween(this.bird).to({ y: 260 }, 380, Phaser.Easing.Quadratic.InOut, true, 0, 1000, true);
-
-        // Add gravity to the bird to make it fall
-        this.bird.body.gravity.y = 1000;
+        initialTween = this.game.add.tween(this.bird).to({ y: 260 }, 380, Phaser.Easing.Quadratic.InOut, true, 0, 1000, true);
 
         // Call the 'flap' function when the spacekey is hit
         var space_key = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -46,8 +44,8 @@ game_state.main.prototype = {
         this.pipes = game.add.group();
         this.pipes.createMultiple(20, 'pipe');
 
-        // Timer that calls 'add_row_of_pipes' ever 1.8 seconds
-        this.timer = this.game.time.events.loop(1800, this.add_row_of_pipes, this);
+        // Timer that calls 'addRowOfPipes' ever 1.8 seconds
+        this.timer = this.game.time.events.loop(1800, this.addRowOfPipes, this);
 
         // Add a score label on the top left of the screen
         this.score = 0;
@@ -57,21 +55,23 @@ game_state.main.prototype = {
 
     // This function is called 60 times per second
     update: function() {
-        // If the bird is out of the world (too high or too low), call the 'restart_game' function
+        // If the bird is out of the world (too high or too low), call the 'restartGame' function
         if (this.bird.inWorld == false) {
-            this.restart_game();
+            this.restartGame();
         }
 
         if(this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+            // Add gravity to the bird to make it fall
+            this.bird.body.gravity.y = 1000;
+            //Pause the initial tween the bird when spacebar is hit.
+            initialTween.pause();
             this.bird.angle = -15;
+
         } else {
-          var _this = this;
-           setTimeout(function() {
-             _this.bird.angle = 15;
-           }, 800);
+            this.bird.angle = 15;
         }
-        // If the bird overlap any pipes, call 'restart_game'
-        this.game.physics.overlap(this.bird, this.pipes, this.restart_game, null, this);
+        // If the bird overlap any pipes, call 'restartGame'
+        this.game.physics.overlap(this.bird, this.pipes, this.restartGame, null, this);
     },
 
     // Make the bird jump
@@ -81,7 +81,7 @@ game_state.main.prototype = {
     },
 
     // Restart the game
-    restart_game: function(bird, pipe) {
+    restartGame: function(bird, pipe) {
         // Remove the timer
         this.game.time.events.remove(this.timer);
 
@@ -90,7 +90,7 @@ game_state.main.prototype = {
     },
 
     // Add a pipe on the screen
-    add_one_pipe: function(x, y) {
+    addOnePipe: function(x, y) {
         // Get the first dead pipe of our group
         var pipe = this.pipes.getFirstDead();
 
@@ -105,12 +105,12 @@ game_state.main.prototype = {
     },
 
     // Add a row of 8 pipes with a hole somewhere in the middle
-    add_row_of_pipes: function() {
+    addRowOfPipes: function() {
         var hole = Math.floor(Math.random()*7)+1;
 
         for (var i = 0; i < 10; i++)
             if (i != hole && i != hole +1 && i != hole -1)
-                this.add_one_pipe(400, i*50);
+                this.addOnePipe(400, i*50);
 
         this.score += 1;
         this.label_score.content = this.score;
