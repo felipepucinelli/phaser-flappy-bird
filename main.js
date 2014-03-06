@@ -1,6 +1,7 @@
 // Initialize Phaser, and creates a 400x490px game
 var game = new Phaser.Game(400, 530, Phaser.AUTO, 'game_div');
 var game_state = {};
+var game_score = {};
 
 var initialTween;
 var hitSpacebar = false;
@@ -163,6 +164,7 @@ game_state.main.prototype = {
 
         this.score += 1;
         this.label_score.content = this.score;
+        game_score.player = {score: this.score}
     },
 };
 
