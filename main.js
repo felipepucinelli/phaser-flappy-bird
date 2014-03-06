@@ -1,7 +1,15 @@
 // Initialize Phaser, and creates a 400x490px game
-var game = new Phaser.Game(400, 490, Phaser.AUTO, 'game_div');
+var game = new Phaser.Game(400, 530, Phaser.AUTO, 'game_div');
 var game_state = {};
+
 var initialTween;
+var hitSpacebar = false;
+
+var GRAVITY = 1500;
+var FLAP = -400;
+var PIPE_SPEED = -200;
+var PIPE_INTERVAL = 1800;
+var GROUND_SPEED = 4;
 
 // Creates a new 'main' state that wil contain the game
 game_state.main = function() { };
@@ -9,20 +17,33 @@ game_state.main.prototype = {
 
     // Function called first to load all the assets
     preload: function() {
-        // Load the background spirte
-        this.game.load.image('background', 'assets/background.png');
-
         // Load the bird sprtesheet, 60x42 is the size of each frame, and 3 is the total number of frames
         this.game.load.spritesheet('bird', 'assets/bird.png', 60, 42, 3);
 
+        // Load the background spirte
+        this.game.load.image('background', 'assets/background.png');
+
         // Load the pipe sprite
         this.game.load.image('pipe', 'assets/pipe.png');
+
+        // Load the pipe sprite
+        this.game.load.image('ground', 'assets/ground.png');
+
+        //Load the flap sound
+        game.load.audio('flap', 'assets/audio/flap.wav');
+
+        //Load the flap sound
+        game.load.audio('hurt', 'assets/audio/hurt.wav');
+
     },
 
     // Fuction called after 'preload' to setup the game
     create: function() {
         // Display the background on the screen
-        this.bird = this.game.add.sprite(0, 0, 'background');
+        this.background = this.game.add.sprite(0, -10, 'background');
+
+        // Display the ground on the screen
+        this.ground = game.add.tileSprite(0, 473, 400, 64, 'ground');
 
         // Display the bird on the screen
         this.bird = this.game.add.sprite(100, 245, 'bird');
@@ -45,7 +66,7 @@ game_state.main.prototype = {
         this.pipes.createMultiple(20, 'pipe');
 
         // Timer that calls 'addRowOfPipes' ever 1.8 seconds
-        this.timer = this.game.time.events.loop(1800, this.addRowOfPipes, this);
+        this.timer = this.game.time.events.loop(PIPE_INTERVAL, this.addRowOfPipes, this);
 
         // Add a score label on the top left of the screen
         this.score = 0;
@@ -60,28 +81,56 @@ game_state.main.prototype = {
             this.restartGame();
         }
 
-        if(this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+        if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
             // Add gravity to the bird to make it fall
-            this.bird.body.gravity.y = 1000;
+            this.bird.body.gravity.y = GRAVITY;
+
             //Pause the initial tween the bird when spacebar is hit.
             initialTween.pause();
-            this.bird.angle = -15;
-
-        } else {
-            this.bird.angle = 15;
+            hitSpacebar = true;
         }
+
         // If the bird overlap any pipes, call 'restartGame'
         this.game.physics.overlap(this.bird, this.pipes, this.restartGame, null, this);
+        this.birdAngle();
+
+        //Makes the ground 'run'
+        this.ground.tilePosition.x -= GROUND_SPEED;
+    },
+
+    birdAngle: function () {
+        if (hitSpacebar === true) {
+          // Change the bird angle when he goes up or down
+          if (this.bird.body.velocity.y < 0) {
+              if (this.bird.angle >= -15) {
+                  this.bird.angle -=  10;
+              }
+          } else {
+              if (this.bird.angle <= 90) {
+                  this.bird.angle +=2;
+              }
+          }
+
+        }
     },
 
     // Make the bird jump
     flap: function() {
         // Add a vertical velocity to the bird
-        this.bird.body.velocity.y = -350;
+        this.bird.body.velocity.y = FLAP;
+
+        //Play the flap sound
+        this.game.add.audio('flap').play();
+
     },
 
     // Restart the game
     restartGame: function(bird, pipe) {
+        //Play the hurt sound everytime you hit a pipe or leave the scene
+        this.game.add.audio('hurt').play();
+
+        hitSpacebar = false;
+
         // Remove the timer
         this.game.time.events.remove(this.timer);
 
@@ -98,7 +147,7 @@ game_state.main.prototype = {
         pipe.reset(x, y);
 
          // Add velocity to the pipe to make it move left
-        pipe.body.velocity.x = -200;
+        pipe.body.velocity.x = PIPE_SPEED;
 
         // Kill the pipe when it's no longer visible
         pipe.outOfBoundsKill = true;
@@ -110,7 +159,7 @@ game_state.main.prototype = {
 
         for (var i = 0; i < 10; i++)
             if (i != hole && i != hole +1 && i != hole -1)
-                this.addOnePipe(400, i*50);
+                this.addOnePipe(400, i*47);
 
         this.score += 1;
         this.label_score.content = this.score;
