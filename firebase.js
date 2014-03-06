@@ -8,8 +8,6 @@ var userName;
         console.log(error);
       } else if (user) {
         // user authenticated with Firebase
-        console.log(user);
-        console.log(user.username);
         userName = user.username;
       } else {
         // user is logged out
@@ -76,12 +74,11 @@ var userName;
     // When the user presses enter on scoreInput, add the score, and update the highest score.
     $("#update-score").on('click', function () {
         var newScore = game_score.player.score;
-        var name = userName;
         var userScoreRef = scoreListRef.child(name);
         var atualScore = parseInt($('.new-score').text());
 
         // Use setWithPriority to put the name / score in Firebase, and set the priority to be the score.
-        if(newScore > atualScore) {
-          userScoreRef.setWithPriority({ name:name, score:newScore }, newScore);
-        }
+        // if(newScore > atualScore) {
+          userScoreRef.setWithPriority({ name:userName, score:newScore }, newScore);
+        // }
     });
