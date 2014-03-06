@@ -74,11 +74,20 @@ var userName;
     // When the user presses enter on scoreInput, add the score, and update the highest score.
     $("#update-score").on('click', function () {
         var newScore = game_score.player.score;
-        var userScoreRef = scoreListRef.child(name);
-        var atualScore = parseInt($('.new-score').text());
+        var userScoreRef = scoreListRef.child(userName);
+
+
+        $('.new-score').each(function() {
+          if($(this).siblings().text() == userName) {
+            console.log('yes');
+            var atualScore = $(this).text();
+            console.log(atualScore);
+            if(newScore > atualScore) {
+              userScoreRef.setWithPriority({ name:userName, score:newScore }, newScore);
+            }
+          }
+        });
 
         // Use setWithPriority to put the name / score in Firebase, and set the priority to be the score.
-        // if(newScore > atualScore) {
-          userScoreRef.setWithPriority({ name:userName, score:newScore }, newScore);
-        // }
+
     });
