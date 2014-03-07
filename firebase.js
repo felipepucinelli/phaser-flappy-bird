@@ -8,9 +8,9 @@ var userName;
         console.log(error);
       } else if (user) {
         // user authenticated with Firebase
-        userName = user.username;
-        console.log('logado:', userName);
-        $('.facebook-status').html('Você está logado no Facebook.');
+        userName = user.username.replace(/\./g, '\\\\.');
+        console.log(user);
+        $('.facebook-status').html('Você está logado no Facebook, ' + user.name + '.');
       } else {
         // user is logged out
       }
@@ -82,7 +82,6 @@ var userName;
           var userScore = snapshot.child(userName).val();
 
           if (userScore && userScore.score > newScore) return;
-
           // Use setWithPriority to put the name / score in Firebase, and set the priority to be the score.
           userScoreRef.setWithPriority({ name:userName, score:newScore }, newScore);
         });

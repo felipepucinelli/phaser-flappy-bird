@@ -125,7 +125,7 @@ game_state.main.prototype = {
 
     },
 
-    // Restart the game
+    // Restart the gamegit s
     restartGame: function(bird, pipe) {
         //Play the hurt sound everytime you hit a pipe or leave the scene
         this.game.add.audio('hurt').play();
@@ -137,7 +137,10 @@ game_state.main.prototype = {
 
         // Start the 'main' state, which restarts the game
         this.game.state.start('main');
-        updateScore();
+        if (typeof userName !== 'undefined'){
+            updateScore();
+        };
+
     },
 
     // Add a pipe on the screen
