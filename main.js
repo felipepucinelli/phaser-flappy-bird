@@ -137,6 +137,7 @@ game_state.main.prototype = {
 
         // Start the 'main' state, which restarts the game
         this.game.state.start('main');
+        updateScore();
     },
 
     // Add a pipe on the screen

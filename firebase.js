@@ -4,11 +4,13 @@ var userName;
   var loginRef = new Firebase('https://phaser-flappy-bird.firebaseio.com/');
     var auth = new FirebaseSimpleLogin(loginRef, function(error, user) {
       if (error) {
-        // an error occurred while attempting login
+        $('.facebook-status').html('Ocorreu algum erro, você não está logado no Facebook.');
         console.log(error);
       } else if (user) {
         // user authenticated with Firebase
         userName = user.username;
+        console.log('logado:', userName);
+        $('.facebook-status').html('Você está logado no Facebook.');
       } else {
         // user is logged out
       }
@@ -16,7 +18,7 @@ var userName;
 
 
   /* RANKING */
-  var LEADERBOARD_SIZE = 5;
+  var LEADERBOARD_SIZE = 10;
 
     // Create our Firebase reference
     var scoreListRef = new Firebase('https://phaser-flappy-bird.firebaseio.com//scoreList');
@@ -72,22 +74,16 @@ var userName;
     scoreListView.on('child_changed', changedCallback);
 
     // When the user presses enter on scoreInput, add the score, and update the highest score.
-    $("#update-score").on('click', function () {
+    var updateScore = function () {
         var newScore = game_score.player.score;
         var userScoreRef = scoreListRef.child(userName);
 
+        scoreListRef.on('value', function(snapshot) {
+          var userScore = snapshot.child(userName).val();
 
-        $('.new-score').each(function() {
-          if($(this).siblings().text() == userName) {
-            console.log('yes');
-            var atualScore = $(this).text();
-            console.log(atualScore);
-            if(newScore > atualScore) {
-              userScoreRef.setWithPriority({ name:userName, score:newScore }, newScore);
-            }
-          }
+          if (userScore && userScore.score > newScore) return;
+
+          // Use setWithPriority to put the name / score in Firebase, and set the priority to be the score.
+          userScoreRef.setWithPriority({ name:userName, score:newScore }, newScore);
         });
-
-        // Use setWithPriority to put the name / score in Firebase, and set the priority to be the score.
-
-    });
+    };
