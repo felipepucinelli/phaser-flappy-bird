@@ -1,5 +1,5 @@
 /* Global */
-body {margin-top:10px; margin-left:auto; margin-right:auto; width:700px;font-family:"Helvetica Neue", Helvetica, Arial, sans-serif; color:#424547; text-align:center; background: url(http://static.tumblr.com/019aade9dc009dc51d74af7c9afbc06f/8tyh04b/Z1Cn1f2lv/tumblr_static_tbg.png) top center repeat-x #82E38C;}
+body {margin-top:10px; margin-left:auto; margin-right:auto; width:900px;font-family:"Helvetica Neue", Helvetica, Arial, sans-serif; color:#424547; text-align:center; background: url(http://static.tumblr.com/019aade9dc009dc51d74af7c9afbc06f/8tyh04b/Z1Cn1f2lv/tumblr_static_tbg.png) top center repeat-x #82E38C;}
 h1 {font-size:36px; font-weight:bold; font-family:"Press Start 2P", Helvetica, Arial, sans-serif; color:#FFF; text-shadow: -2px 2px 0px rgba(0, 0, 0, 1); -moz-text-shadow: -2px 2px 0px rgba(0, 0, 0, 1); -webkit-text-shadow: -2px 2px 0px rgba(0, 0, 0, 1);}
 h2 {color:#FFF; font-size:24px; font-weight:normal;}
 h3 {font-size:30px;}
@@ -14,3 +14,6 @@ em {font-style:normal; font-weight:bold; color:black;}
 
 /* Facebook login button */
 .fb-login {margin:0 auto; width:300px; height:46px; display:block; background-image: url(https://fbcdn-dragon-a.akamaihd.net/hphotos-ak-prn1/t39.2178/851559_525052150897756_1657976780_n.png); text-indent:-9999px;}
+
+/* Bottom Signature */
+.signature {display:block; margin:15px; font-size:16px; font-weight:bold; font-family:"Press Start 2P", Helvetica, Arial, sans-serif; color:#FFF; text-shadow: -2px 2px 0px rgba(0, 0, 0, 1); -moz-text-shadow: -2px 2px 0px rgba(0, 0, 0, 1); -webkit-text-shadow: -2px 2px 0px rgba(0, 0, 0, 1); text-decoration:none;}
