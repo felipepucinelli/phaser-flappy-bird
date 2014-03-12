@@ -12,6 +12,7 @@ var PIPE_SPEED = -200;
 var PIPE_INTERVAL = 1800;
 var GROUND_SPEED = 4;
 
+
 // Creates a new 'main' state that wil contain the game
 game_state.main = function() { };
 game_state.main.prototype = {
@@ -26,6 +27,12 @@ game_state.main.prototype = {
 
         // Load the pipe sprite
         this.game.load.image('pipe', 'assets/pipe.png');
+
+        // Load the pipe hole sprite
+        this.game.load.image('pipe-hole-up', 'assets/pipe-hole-up.png');
+
+        // Load the pipe hole sprite
+        this.game.load.image('pipe-hole-down', 'assets/pipe-hole-down.png');
 
         // Load the pipe sprite
         this.game.load.image('ground', 'assets/ground.png');
@@ -66,13 +73,21 @@ game_state.main.prototype = {
         this.pipes = game.add.group();
         this.pipes.createMultiple(20, 'pipe');
 
+        // Create a group of 20 pipes holes
+        this.pipesHolesUp = game.add.group();
+        this.pipesHolesUp.createMultiple(20, 'pipe-hole-up');
+
+        // Create a group of 20 pipes holes
+        this.pipesHolesDown = game.add.group();
+        this.pipesHolesDown.createMultiple(20, 'pipe-hole-down');
+
         // Timer that calls 'addRowOfPipes' ever 1.8 seconds
         this.timer = this.game.time.events.loop(PIPE_INTERVAL, this.addRowOfPipes, this);
 
         // Add a score label on the top left of the screen
         this.score = 0;
-        var style = { font: "30px Arial", fill: "#ffffff" };
-        this.label_score = this.game.add.text(20, 20, "0", style);
+        var style = { font: '32px "Press Start 2P"', fill: '#fff', stroke: '#430', strokeThickness: 8, align: 'center'};
+        this.label_score = this.game.add.text(this.game.world.centerX - 20, 30, "0", style);
     },
 
     // This function is called 60 times per second
@@ -93,6 +108,8 @@ game_state.main.prototype = {
 
         // If the bird overlap any pipes, call 'restartGame'
         this.game.physics.overlap(this.bird, this.pipes, this.restartGame, null, this);
+        this.game.physics.overlap(this.bird, this.pipesHolesUp, this.restartGame, null, this);
+        this.game.physics.overlap(this.bird, this.pipesHolesDown, this.restartGame, null, this);
         this.birdAngle();
 
         //Makes the ground 'run'
@@ -103,9 +120,7 @@ game_state.main.prototype = {
         if (hitSpacebar === true) {
           // Change the bird angle when he goes up or down
           if (this.bird.body.velocity.y < 0) {
-              if (this.bird.angle >= -15) {
-                  this.bird.angle -=  10;
-              }
+              this.bird.angle = -15;
           } else {
               if (this.bird.angle <= 90) {
                   this.bird.angle +=2;
@@ -158,14 +173,51 @@ game_state.main.prototype = {
         pipe.outOfBoundsKill = true;
     },
 
+    // Add a pipe on the screen
+    addOnePipeHoleDown: function(x, y) {
+        // Get the first dead pipe of our group
+        var pipeHoleDown = this.pipesHolesDown.getFirstDead();
+
+        // Set the new position of the pipe
+        pipeHoleDown.reset(x, y);
+
+         // Add velocity to the pipe to make it move left
+        pipeHoleDown.body.velocity.x = PIPE_SPEED;
+
+        // Kill the pipe when it's no longer visible
+        pipeHoleDown.outOfBoundsKill = true;
+    },
+
+    addOnePipeHoleUp: function(x, y) {
+        // Get the first dead pipe of our group
+        var pipeHoleUp = this.pipesHolesUp.getFirstDead();
+
+        // Set the new position of the pipe
+        pipeHoleUp.reset(x, y);
+
+         // Add velocity to the pipe to make it move left
+        pipeHoleUp.body.velocity.x = PIPE_SPEED;
+
+        // Kill the pipe when it's no longer visible
+        pipeHoleUp.outOfBoundsKill = true;
+    },
+
+
     // Add a row of 8 pipes with a hole somewhere in the middle
     addRowOfPipes: function() {
-        var hole = Math.floor(Math.random()*7)+1;
+        var hole = Math.floor(Math.random()*6)+2;
 
-        for (var i = 0; i < 10; i++)
-            if (i != hole && i != hole +1 && i != hole -1)
-                this.addOnePipe(400, i*47);
-
+        for (var i = 0; i < 10; i++) {
+            if (i != hole && i != hole +1 && i != hole -1) {
+                if(i == hole - 2) {
+                  this.addOnePipeHoleUp(397, i*47);
+                } else if (i == hole + 2) {
+                  this.addOnePipeHoleDown(397, i*47);
+                } else {
+                  this.addOnePipe(400, i*47);
+                }
+            }
+        }
         this.score += 1;
         this.label_score.content = this.score;
         game_score.player = {score: this.score}

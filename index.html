@@ -3,22 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <title>Phaser Flappy Bird</title>
-  <style>
-    body {text-align:center;}
-    #game_div {width:400px; margin:auto; margin-top:50px;}
-  </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://www.firebase.com/css/example.css">
+  <link rel="stylesheet" type="text/css" href="css/screen.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Press+Start+2P&amp;subset=latin">
 </head>
 <body>
   <h1>Phaser Flappy Bird</h1>
-  <h4>Aperte "Espaço" para pular.</h4>
+  <h2>Instruções: Aperte "Espaço" para pular.</h2>
   <p>Conecte-se ao Facebook para salvar a sua pontuação.</p>
-  <button onclick="auth.login('facebook')">Facebook Login</button>
+  <a href="javascript:;" class="fb-login" title="Faça login através da sua conta no Facebook para salvar sua pontuação." onclick="auth.login('facebook')">Facebook Login</a>
   <p class="facebook-status">Você não está logado no Facebook.</p>
   <div id="game_div"></div>
   <h3>Pontuação</h3>
-  <table id="leaderboardTable"></table>
+  <table id="leaderboardTable"><!-- --></table>
 
   <script type='text/javascript' src='https://cdn.firebase.com/js/simple-login/1.3.0/firebase-simple-login.js'></script>
   <script src="https://cdn.firebase.com/v0/firebase.js"></script>
