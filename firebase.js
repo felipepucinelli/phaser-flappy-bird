@@ -8,7 +8,7 @@ var userName;
         console.log(error);
       } else if (user) {
         // user authenticated with Firebase
-        userName = user.username.replace(/\./g, '\\\\.');
+        userName = user.name;
         console.log(user);
         $('.facebook-status').html('Você está logado no Facebook, ' + user.name + '.');
       } else {
